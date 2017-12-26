@@ -8,5 +8,4 @@ if(!$dbh){
 	die("Connection error");
 }
 
-//dxvhdbsvhjdsnbvhbdsnsexwx
 ?>
