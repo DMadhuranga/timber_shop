@@ -84,7 +84,7 @@ $telephone = $user->getContacts();
         <!-- Page content -->
         <div class="col-md-6">
             <div class="card">
-                <h3 class="card-title">Eddit Profile</h3>
+                <h3 class="card-title">Edit Profile</h3>
                 <div class="card-body">
                     <form>
 
