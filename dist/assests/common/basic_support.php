@@ -103,7 +103,7 @@ function checkLoginDataGet($dbh,$user_name,$password){
 
 function getUser($dbh,$user_name,$password){
     if ($dbh) {
-        $sql = $dbh->prepare("select user_id,user_name,email,role_id,first_name,last_name,national_id,password from user where ((user_name=? OR email=?) AND password=?) and deleted=0");
+        $sql = $dbh->prepare("select user_id,user_name,email,role_id,first_name,last_name,national_id,password,address from user where ((user_name=? OR email=?) AND password=?) and deleted=0");
         $sql->execute(array($user_name,$user_name, $password));
         if ($sql) {
             $result = $sql->fetchAll();
@@ -117,6 +117,7 @@ function getUser($dbh,$user_name,$password){
                 $temp_users->setRoleId($result[0]["role_id"]);
                 $temp_users->setUserId($result[0]["user_id"]);
                 $temp_users->setUserName($result[0]["user_name"]);
+                $temp_users->setAddress($result[0]["address"]);
                 $sql = $dbh->prepare("select contact_id,contact_number from user_contact where user_id=? and deleted=0");
                 $sql->execute(array($temp_users->getUserId()));
                 if ($sql) {
