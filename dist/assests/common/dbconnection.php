@@ -7,5 +7,4 @@ $dbh = new PDO('mysql:host=localhost;dbname=kalum_timber', 'root', '1010');
 if(!$dbh){
 	die("Connection error");
 }
-
 ?>

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by PhpStorm.
  * User: Dan
@@ -11,6 +12,20 @@ class User
     var $user_name;
     var $first_name;
     var $last_name;
+    var $contacts;
+
+    /**
+     * @return mixed
+     */
+    public function getContacts()
+    {
+
+        if($this->contacts==null){
+            return array();
+        }
+        return $this->contacts;
+    }
+
     /**
      * @return mixed
      */
@@ -18,6 +33,7 @@ class User
     {
         return $this->user_id;
     }
+
     /**
      * @param mixed $user_id
      */
@@ -25,6 +41,7 @@ class User
     {
         $this->user_id = $user_id;
     }
+
     /**
      * @return mixed
      */
@@ -32,6 +49,7 @@ class User
     {
         return $this->user_name;
     }
+
     /**
      * @param mixed $user_name
      */
@@ -39,6 +57,7 @@ class User
     {
         $this->user_name = $user_name;
     }
+
     /**
      * @return mixed
      */
@@ -46,6 +65,7 @@ class User
     {
         return $this->first_name;
     }
+
     /**
      * @param mixed $first_name
      */
@@ -53,6 +73,7 @@ class User
     {
         $this->first_name = $first_name;
     }
+
     /**
      * @return mixed
      */
@@ -60,6 +81,7 @@ class User
     {
         return $this->last_name;
     }
+
     /**
      * @param mixed $last_name
      */
@@ -67,6 +89,7 @@ class User
     {
         $this->last_name = $last_name;
     }
+
     /**
      * @return mixed
      */
@@ -74,6 +97,7 @@ class User
     {
         return $this->national_id;
     }
+
     /**
      * @param mixed $national_id
      */
@@ -81,6 +105,7 @@ class User
     {
         $this->national_id = $national_id;
     }
+
     /**
      * @return mixed
      */
@@ -88,6 +113,7 @@ class User
     {
         return $this->role_id;
     }
+
     /**
      * @param mixed $role_id
      */
@@ -95,6 +121,7 @@ class User
     {
         $this->role_id = $role_id;
     }
+
     /**
      * @return mixed
      */
@@ -102,6 +129,7 @@ class User
     {
         return $this->email;
     }
+
     /**
      * @param mixed $email
      */
@@ -109,6 +137,7 @@ class User
     {
         $this->email = $email;
     }
+
     /**
      * @return mixed
      */
@@ -116,6 +145,7 @@ class User
     {
         return $this->password;
     }
+
     /**
      * @param mixed $password
      */
@@ -123,8 +153,16 @@ class User
     {
         $this->password = $password;
     }
+
+    public function addAContact($contact_id,$contact_number){
+        if($this->contacts==null){
+            $this->contacts = array();
+        }
+        array_push($this->contacts,array($contact_id,$contact_number));
+    }
     var $national_id;
     var $role_id;
     var $email;
     var $password;
+
 }

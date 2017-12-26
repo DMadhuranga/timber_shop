@@ -13,7 +13,7 @@ $user = unserialize($_SESSION["user"]);
 ?>
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <meta charset="utf-8">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -28,56 +28,62 @@ $user = unserialize($_SESSION["user"]);
     script(src='https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js')
     script(src='https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js')
     -->
-</head>
-<body class="sidebar-mini fixed">
-<div class="wrapper">
-    <!-- Navbar-->
-    <header class="main-header hidden-print"><a class="logo" href="home.php">Kalum Timber</a>
+  </head>
+  <body class="sidebar-mini fixed">
+    <div class="wrapper">
+      <!-- Navbar-->
+      <header class="main-header hidden-print"><a class="logo" href="home.php">Kalum Timber</a>
         <nav class="navbar navbar-static-top">
-            <!-- Sidebar toggle button--><a class="sidebar-toggle" href="#" data-toggle="offcanvas"></a>
-            <!-- Navbar Right Menu-->
-            <div class="navbar-custom-menu">
-                <ul class="top-nav">
-                    <!--Notification Menu-->
-                    <li class="dropdown notification-menu"><a class="dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-bell-o fa-lg"></i></a>
-                        <ul class="dropdown-menu">
-                        </ul>
-                    </li>
-                    <!-- User Menu-->
-                    <li class="dropdown"><a class="dropdown-toggle" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user fa-lg"></i></a>
-                        <ul class="dropdown-menu settings-menu">
-                            <li><a href="profile.php"><i class="fa fa-user fa-lg"></i> Profile</a></li>
-                            <li><a href="logout.php"><i class="fa fa-sign-out fa-lg"></i> Logout</a></li>
-                        </ul>
-                    </li>
+          <!-- Sidebar toggle button--><a class="sidebar-toggle" href="#" data-toggle="offcanvas"></a>
+          <!-- Navbar Right Menu-->
+          <div class="navbar-custom-menu">
+            <ul class="top-nav">
+              <!--Notification Menu-->
+              <li class="dropdown notification-menu"><a class="dropdown-toggle" href="#" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-bell-o fa-lg"></i></a>
+                <ul class="dropdown-menu">
                 </ul>
-            </div>
-        </nav>
-    </header>
-    <!-- Side-Nav-->
-    <aside class="main-sidebar hidden-print">
-        <section class="sidebar">
-            <div class="user-panel">
-                <div class="pull-left image"><img class="img-circle" src="images/home_user_white.png" alt="User Image"></div>
-                <div class="pull-left info">
-                    <p><?php echo $user->getFirstName()." ".$user->getLastName(); ?></p>
-                </div>
-            </div>
-            <!-- Sidebar Menu-->
-            <ul class="sidebar-menu">
-
-                <?php echo $sideBar; ?>
+              </li>
+              <!-- User Menu-->
+              <li class="dropdown"><a class="dropdown-toggle" href="#" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fa fa-user fa-lg"></i></a>
+                <ul class="dropdown-menu settings-menu">
+                  <li><a href="profile.php"><i class="fa fa-user fa-lg"></i> Profile</a></li>
+                  <li><a href="logout.php"><i class="fa fa-sign-out fa-lg"></i> Logout</a></li>
+                </ul>
+              </li>
             </ul>
+          </div>
+        </nav>
+      </header>
+      <!-- Side-Nav-->
+      <aside class="main-sidebar hidden-print">
+        <section class="sidebar">
+          <div class="user-panel">
+            <div class="pull-left image"><img class="img-circle" src="images/home_user_white.png" alt="User Image"></div>
+            <div class="pull-left info">
+              <p><?php echo $user->getFirstName()." ".$user->getLastName(); ?></p>
+            </div>
+          </div>
+          <!-- Sidebar Menu-->
+          <ul class="sidebar-menu">
+
+              <?php echo $sideBar; ?>
+          </ul>
         </section>
-    </aside>
-    <div class="content-wrapper">
-        <!-- Page content -->
+      </aside>
+      <div class="content-wrapper">
+          <!-- Page content
+
+
+
+
+
+          -->
+      </div>
     </div>
-</div>
-<!-- Javascripts-->
-<script src="js/jquery-2.1.4.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="js/plugins/pace.min.js"></script>
-<script src="js/main.js"></script>
-</body>
+    <!-- Javascripts-->
+    <script src="js/jquery-2.1.4.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/plugins/pace.min.js"></script>
+    <script src="js/main.js"></script>
+  </body>
 </html>

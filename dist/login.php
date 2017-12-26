@@ -5,6 +5,7 @@
  * Date: 12/20/2017
  * Time: 2:02 PM
  */
+
 include_once("assests/common/dbconnection.php");
 include_once("assests/common/basic_support.php");
 if(!isset($_SESSION)){
@@ -47,7 +48,7 @@ if(isset($_REQUEST["user_name"]) && isset($_REQUEST["password"])){
 ?>
 <!DOCTYPE html>
 <html xmlns:color="http://www.w3.org/1999/xhtml">
-<head>
+  <head>
     <meta charset="utf-8">
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -62,60 +63,60 @@ if(isset($_REQUEST["user_name"]) && isset($_REQUEST["password"])){
     script(src='https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js')
     script(src='https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js')
     -->
-</head>
-<body>
-<section class="material-half-bg">
-    <div class="cover"></div>
-</section>
-<section class="login-content">
-    <div class="logo">
+  </head>
+  <body>
+    <section class="material-half-bg">
+      <div class="cover"></div>
+    </section>
+    <section class="login-content">
+      <div class="logo">
         <h1>Kalum Timber</h1>
-    </div>
-    <div class="login-box">
+      </div>
+      <div class="login-box">
         <form class="login-form" action="login.php" method="post">
-            <h3 class="login-head"><i class="fa fa-lg fa-fw fa-user"></i>SIGN IN</h3>
-            <div class="form-group">
-                <label style="color: red"><?php echo $return; ?></label>
-                <label class="control-label">USERNAME </label>&nbsp &nbsp &nbsp
-                <input name="user_name" class="form-control" type="text" placeholder="Email" autofocus>
+          <h3 class="login-head"><i class="fa fa-lg fa-fw fa-user"></i>SIGN IN</h3>
+          <div class="form-group">
+              <label style="color: red"><?php echo $return; ?></label>
+            <label class="control-label">USERNAME </label>&nbsp &nbsp &nbsp
+            <input name="user_name" class="form-control" type="text" placeholder="Email" autofocus>
+          </div>
+          <div class="form-group">
+            <label  class="control-label">PASSWORD</label>
+            <input name="password" class="form-control" type="password" placeholder="Password">
+          </div>
+          <div class="form-group">
+            <div class="utility">
+              <div class="animated-checkbox">
+                <label class="semibold-text">
+                  <input name="stay_sign" type="checkbox"><span class="label-text">Stay Signed in</span>
+                </label>
+              </div>
+                <!--
+              <p class="semibold-text mb-0"><a data-toggle="flip">Forgot Password ?</a></p> -->
             </div>
-            <div class="form-group">
-                <label  class="control-label">PASSWORD</label>
-                <input name="password" class="form-control" type="password" placeholder="Password">
-            </div>
-            <div class="form-group">
-                <div class="utility">
-                    <div class="animated-checkbox">
-                        <label class="semibold-text">
-                            <input name="stay_sign" type="checkbox"><span class="label-text">Stay Signed in</span>
-                        </label>
-                    </div>
-                    <!--
-                  <p class="semibold-text mb-0"><a data-toggle="flip">Forgot Password ?</a></p> -->
-                </div>
-            </div>
-            <div class="form-group btn-container">
-                <button class="btn btn-primary btn-block"><i class="fa fa-sign-in fa-lg fa-fw"></i>SIGN IN</button>
-            </div>
+          </div>
+          <div class="form-group btn-container">
+            <button class="btn btn-primary btn-block"><i class="fa fa-sign-in fa-lg fa-fw"></i>SIGN IN</button>
+          </div>
         </form>
         <form class="forget-form" action="index.html">
-            <h3 class="login-head"><i class="fa fa-lg fa-fw fa-lock"></i>Forgot Password ?</h3>
-            <div class="form-group">
-                <label class="control-label">EMAIL</label>
-                <input class="form-control" type="text" placeholder="Email">
-            </div>
-            <div class="form-group btn-container">
-                <button class="btn btn-primary btn-block"><i class="fa fa-unlock fa-lg fa-fw"></i>RESET</button>
-            </div>
-            <div class="form-group mt-20">
-                <p class="semibold-text mb-0"><a data-toggle="flip"><i class="fa fa-angle-left fa-fw"></i> Back to Login</a></p>
-            </div>
+          <h3 class="login-head"><i class="fa fa-lg fa-fw fa-lock"></i>Forgot Password ?</h3>
+          <div class="form-group">
+            <label class="control-label">EMAIL</label>
+            <input class="form-control" type="text" placeholder="Email">
+          </div>
+          <div class="form-group btn-container">
+            <button class="btn btn-primary btn-block"><i class="fa fa-unlock fa-lg fa-fw"></i>RESET</button>
+          </div>
+          <div class="form-group mt-20">
+            <p class="semibold-text mb-0"><a data-toggle="flip"><i class="fa fa-angle-left fa-fw"></i> Back to Login</a></p>
+          </div>
         </form>
-    </div>
-</section>
-</body>
-<script src="js/jquery-2.1.4.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-<script src="js/plugins/pace.min.js"></script>
-<script src="js/main.js"></script>
+      </div>
+    </section>
+  </body>
+  <script src="js/jquery-2.1.4.min.js"></script>
+  <script src="js/bootstrap.min.js"></script>
+  <script src="js/plugins/pace.min.js"></script>
+  <script src="js/main.js"></script>
 </html>

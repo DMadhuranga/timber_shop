@@ -10,6 +10,7 @@ include_once("classes/User.php");
 if(!isset($_SESSION)){
     session_start();
 }
+
 function authenticate($dbh,$role_array,$page_url){
     if(isset($_SESSION["user"])){
         $user = unserialize($_SESSION["user"]);
@@ -30,6 +31,7 @@ function authenticate($dbh,$role_array,$page_url){
     $page_url = explode("/",$page_url);
     return getSideBar($dbh,$user->getRoleId(),$page_url[sizeof($page_url)-1]);
 }
+
 function getSideBar($dbh,$role_number,$page_url){
     $return = "";
     if ($dbh) {
@@ -79,6 +81,7 @@ function getSideBar($dbh,$role_number,$page_url){
     }
     die("Connection failed. Please try again later");
 }
+
 function checkLoginDataGet($dbh,$user_name,$password){
     if ($dbh) {
         $sql = $dbh->prepare("select user_name,role_id from user where ((user_name=? OR email=?) AND password=?) and deleted=0");
@@ -91,11 +94,13 @@ function checkLoginDataGet($dbh,$user_name,$password){
         }else{
             return -2;
         }
+
     }else{
         return -2;
     }
     return -1;
 }
+
 function getUser($dbh,$user_name,$password){
     if ($dbh) {
         $sql = $dbh->prepare("select user_id,user_name,email,role_id,first_name,last_name,national_id,password from user where ((user_name=? OR email=?) AND password=?) and deleted=0");
@@ -112,16 +117,27 @@ function getUser($dbh,$user_name,$password){
                 $temp_users->setRoleId($result[0]["role_id"]);
                 $temp_users->setUserId($result[0]["user_id"]);
                 $temp_users->setUserName($result[0]["user_name"]);
-                return $temp_users;
+                $sql = $dbh->prepare("select contact_id,contact_number from user_contact where user_id=? and deleted=0");
+                $sql->execute(array($temp_users->getUserId()));
+                if ($sql) {
+                    $result = $sql->fetchAll();
+                    foreach ($result as $item){
+                        $temp_users->addAContact($item["contact_id"],$item["contact_number"]);
+                    }
+                    return $temp_users;
+                }
+
             }
         }else{
             return -2;
         }
+
     }else{
         return -2;
     }
     return -1;
 }
+
 function checkLogin($conn,$u_name,$password){
     $result = checkLoginDataGet($conn,$u_name,$password);
     if($result==-1){
