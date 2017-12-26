@@ -18,7 +18,7 @@ $id = $user->getNationalId();
 $email = $user->getEmail();
 $password = $user->getPassword();
 $address = $user->getAddress();
-$telephone = $user->getTelephone();
+$telephone = $user->getContacts();
 
 ?>
 <!DOCTYPE html>
@@ -111,10 +111,15 @@ $telephone = $user->getTelephone();
                             <label class="control-label">Address</label>
                             <textarea class="form-control" rows="4" id="address" placeholder="<?php echo $address?>"></textarea>
                         </div>
-                        <div class="form-group">
-                            <label class="control-label">Telephone Number</label>
-                            <input class="form-control" type="text" id="telephone" placeholder="<?php echo $telephone?>">
-                        </div>
+                        <?php
+                            foreach ($telephone as $item){
+                                echo "<div class='form-group'>
+                            <label class='control-label'>Contact Number</label>
+                            <input class='form-control' type='text' id='id' placeholder='".$item[1]."' required>
+                        </div>";
+                            }
+
+                        ?>
 
                         <div class="form-group">
                             <label class="control-label">National Identity Card</label>
