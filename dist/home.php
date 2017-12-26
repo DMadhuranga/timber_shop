@@ -71,7 +71,13 @@ $user = unserialize($_SESSION["user"]);
         </section>
       </aside>
       <div class="content-wrapper">
-          <!-- Page content -->
+          <!-- Page content
+
+
+
+
+
+          -->
       </div>
     </div>
     <!-- Javascripts-->

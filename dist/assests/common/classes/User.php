@@ -12,6 +12,19 @@ class User
     var $user_name;
     var $first_name;
     var $last_name;
+    var $contacts;
+
+    /**
+     * @return mixed
+     */
+    public function getContacts()
+    {
+
+        if($this->contacts==null){
+            return array();
+        }
+        return $this->contacts;
+    }
 
     /**
      * @return mixed
@@ -139,6 +152,13 @@ class User
     public function setPassword($password)
     {
         $this->password = $password;
+    }
+
+    public function addAContact($contact_id,$contact_number){
+        if($this->contacts==null){
+            $this->contacts = array();
+        }
+        array_push($this->contacts,array($contact_id,$contact_number));
     }
     var $national_id;
     var $role_id;

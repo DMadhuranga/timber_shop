@@ -117,7 +117,16 @@ function getUser($dbh,$user_name,$password){
                 $temp_users->setRoleId($result[0]["role_id"]);
                 $temp_users->setUserId($result[0]["user_id"]);
                 $temp_users->setUserName($result[0]["user_name"]);
-                return $temp_users;
+                $sql = $dbh->prepare("select contact_id,contact_number from user_contact where user_id=? and deleted=0");
+                $sql->execute(array($temp_users->getUserId()));
+                if ($sql) {
+                    $result = $sql->fetchAll();
+                    foreach ($result as $item){
+                        $temp_users->addAContact($item["contact_id"],$item["contact_number"]);
+                    }
+                    return $temp_users;
+                }
+
             }
         }else{
             return -2;
