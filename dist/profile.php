@@ -125,10 +125,6 @@ $telephone = $user->getContacts();
                             <label class="control-label">National Identity Card</label>
                             <input class="form-control" type="text" id="id" placeholder="<?php echo $id?>" required>
                         </div>
-                        <div class="form-group">
-                            <label class="control-label">Image</label>
-                            <input class="form-control" type="file">
-                        </div>
                         <!--div class="form-group">
                             <div class="checkbox">
                                 <label>
