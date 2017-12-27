@@ -266,7 +266,6 @@ if($timber_types==-1){
         cartTable = document.getElementById("cartTable").rows;
         for(i=0;i<cartTable.length;i++){
             if(cartTable[i].cells[1].innerHTML!=""){
-                alert(cartTable[i].cells[1].innerHTML);
             }
         }
         return num;
