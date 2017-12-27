@@ -145,15 +145,6 @@ if($timber_types==-1){
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>0009</td>
-                                <td>2.00X4.00</td>
-                                <td>12<br>13</td>
-                                <td><input type='text' value=''><input type='text' value=''></td>
-                                <td><input type='text' value=''><input type='text' value=''></td>
-                                <td><input type='text' value=""><input type='text' value=''></td>
-                            </tr>
                             </tbody>
                         </table>
                     </div>
