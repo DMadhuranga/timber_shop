@@ -132,6 +132,23 @@ if($timber_types==-1){
                 <div class="card">
                     <h3 class="card-title">Cart</h3>
                     <div class="card-body" id="cartDiv">
+                        <form class="form-inline">
+                            <div class="form-group">
+                                <label class="control-label">Total : 12205.65 &nbsp;&nbsp;&nbsp;&nbsp;</label>
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Discount :&nbsp;</label>
+                                <input id="discountInp" type="text" placeholder="">
+                                &nbsp;&nbsp;&nbsp;&nbsp;
+                            </div>
+                            <div class="form-group">
+                                <label class="control-label">Final : 12205.65 &nbsp;&nbsp;&nbsp;&nbsp;</label>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-primary icon-btn" type="button"><i class="fa fa-fw fa-lg fa-check-circle"></i>Finish</button>
+                            </div>
+                            <br>&nbsp;<br>&nbsp;<br>
+                        </form>
                         <table class="table table-hover" id="cartTable">
                             <thead>
                             <tr>
@@ -142,6 +159,7 @@ if($timber_types==-1){
                                 <th>Piece Count</th>
                                 <th>Unit Price</th>
                                 <th>Total Price</th>
+                                <th></th>
                             </tr>
                             </thead>
                             <tbody>
@@ -230,13 +248,17 @@ if($timber_types==-1){
                 confirmButtonColor:'#009688'
             });
         }else{
+            num = getRowNumber();
             cartTable = document.getElementById("cartTable");
             var newRow = cartTable.insertRow(cartTable.rows.length);
-            str = "<td rowspan='"+pieceCounts.length+"'>"+String(cartTable.rows.length-1)+"</td><td rowspan='"+pieceCounts.length+"'>"+
-                stockNo+"</td><td rowspan='"+pieceCounts.length+"'>"+dimension+"</td><td>"+pieceLengths[0]+"</td><td><input type='text' value='"+pieceCounts[0]+"'></td><td><input type='text' value='"+unitPrice+"'></td><td><input type='text'></td>";
+            if(unitPrice==""){
+                unitPrice = "0.00";
+            }
+            str = "<td rowspan='"+pieceCounts.length+"'>"+String(num)+"</td><td rowspan='"+pieceCounts.length+"'>"+
+                stockNo+"</td><td rowspan='"+pieceCounts.length+"'>"+dimension+"</td><td id='"+stockNo+"#pl0"+"'>"+pieceLengths[0]+"</td><td><input id='"+stockNo+"#pc0"+"' data-maxCount='"+pieceCounts[0]+"' type='text' value='"+pieceCounts[0]+"' onchange='checkCount(this)'></td><td><input id='"+stockNo+"#up0"+"' onchange='changeUnitPrice(this)' data-original='"+unitPrice+"' type='text' value='"+unitPrice+"'></td><td><input onchange='checkTotalPrice(this)' id='"+stockNo+"#tp0"+"' type='text' value='"+parseFloat(String(parseInt(pieceLengths[0])*parseInt(pieceCounts[0])*parseFloat(unitPrice))).toFixed(2)+"'></td><td rowspan='"+pieceCounts.length+"'><a data-stockNo='"+stockNo+"' class='btn btn-default' onclick='remove(this)' >Remove</a></td>";
             newRow.innerHTML = str;
             for(i=1;i<pieceCounts.length;i++){
-                cartTable.insertRow(cartTable.rows.length).innerHTML = "<td>"+pieceLengths[i]+"</td><td><input type='text' value='"+pieceCounts[i]+"'></td><td><input type='text' value='"+unitPrice+"'></td><td><input type='text'></td>";
+                cartTable.insertRow(cartTable.rows.length).innerHTML = "<td id='"+stockNo+"#pl"+String(i)+"'>"+pieceLengths[i]+"</td><td><input id='"+stockNo+"#pc"+String(i)+"' data-maxCount='"+pieceCounts[i]+"' type='text' value='"+pieceCounts[i]+"' onchange='checkCount(this)'></td><td><input id='"+stockNo+"#up"+String(i)+"' onchange='changeUnitPrice(this)' data-original='"+unitPrice+"' type='text' value='"+unitPrice+"'></td><td><input onchange='checkTotalPrice(this)' id='"+stockNo+"#tp"+String(i)+"' type='text' value='"+parseFloat(String(parseInt(pieceLengths[i])*parseInt(pieceCounts[i])*parseFloat(unitPrice))).toFixed(2)+"'></td>";
             }
         }
     }
@@ -255,10 +277,128 @@ if($timber_types==-1){
         num = 0;
         cartTable = document.getElementById("cartTable").rows;
         for(i=0;i<cartTable.length;i++){
-            if(cartTable[i].cells[1].innerHTML!=""){
+            if(cartTable[i].cells.length==8){
+                num++;
             }
         }
         return num;
+    }
+
+    function checkCount(me){
+        newCount = me.value;
+        maxCount = me.getAttribute("data-maxCount");
+        if(isNaN(newCount) || (newCount % 1 != 0) || (newCount<0)){
+            me.value = maxCount;
+            swal({
+                title:'Invalid count!',
+                text:'',
+                type:'info',
+                confirmButtonColor:'#009688'
+            });
+            checkCount(me)
+        }else if(newCount>maxCount){
+            swal({
+                title:'Invalid count!',
+                text:'Input number of pieces is larger than available',
+                type:'info',
+                confirmButtonColor:'#009688'
+            });
+            me.value = maxCount;
+            checkCount(me)
+        }else{
+            stockNo = me.id.substr(0,me.id.length-3);
+            pieceLength = parseInt(document.getElementById(stockNo+"pl"+me.id.substr(-1)).innerHTML);
+            price = document.getElementById(stockNo+"up"+me.id.substr(-1)).value;
+            document.getElementById(stockNo+"tp"+me.id.substr(-1)).value = parseFloat(String(pieceLength*newCount*price)).toFixed(2);
+        }
+
+    }
+
+    function changeUnitPrice(me){
+        price = me.value;
+        if(isNaN(price) || (price<0)){
+            swal({
+                title:'Invalid price!',
+                text:'',
+                type:'info',
+                confirmButtonColor:'#009688'
+            });
+            me.value = me.getAttribute("data-original");
+            changeUnitPrice(me)
+        }else{
+            me.value = parseFloat(String(price)).toFixed(2);
+            price = me.value;
+            stockNo = me.id.substr(0,me.id.length-3);
+            pieceLength = parseInt(document.getElementById(stockNo+"pl"+me.id.substr(-1)).innerHTML);
+            pieceCount = document.getElementById(stockNo+"pc"+me.id.substr(-1)).value;
+            document.getElementById(stockNo+"tp"+me.id.substr(-1)).value = parseFloat(String(pieceLength*pieceCount*price)).toFixed(2);
+        }
+    }
+    function getCellRow(me){
+        table = document.getElementById("cartDiv").rows;
+        for(i=0;i<table.length;i++){
+            for(j=0;j<table[i].cells.length;j++){
+                if(me.id==table[i].cells[j].id){
+                    return table[i];
+                }
+            }
+        }
+    }
+
+    function remove(me){
+        stockNo = me.getAttribute("data-stockNo");
+        table = document.getElementById("cartTable").rows;
+        for(i=0;i<table.length;i++){
+            if(table[i].cells[1].innerHTML==stockNo){
+                document.getElementById("cartTable").deleteRow(i);
+                while(table[i].cells.length!=8){
+                    document.getElementById("cartTable").deleteRow(i);
+                }
+                orderTable();
+            }
+        }
+    }
+
+    function orderTable(){
+        table = document.getElementById("cartTable").rows;
+        cnt = 1;
+        for(i=1;i<table.length;i++){
+            if(table[i].cells.length==8){
+                table[i].cells[0].innerHTML = cnt;
+                cnt++;
+            }
+        }
+    }
+
+    function checkTotalPrice(me){
+        totalPrice = me.value;
+        stockNo = me.id.substr(0,me.id.length-3);
+        pieceLength = parseInt(document.getElementById(stockNo+"pl"+me.id.substr(-1)).innerHTML);
+        priceCount = document.getElementById(stockNo+"pc"+me.id.substr(-1)).value;
+        if(isNaN(totalPrice) || (totalPrice<0)){
+            swal({
+                title:'Invalid price!',
+                text:'',
+                type:'info',
+                confirmButtonColor:'#009688'
+            });
+            price = document.getElementById(stockNo+"up"+me.id.substr(-1)).value;
+            me.value = parseFloat(String(pieceLength*priceCount*price)).toFixed(2);
+        }else if(parseInt(priceCount)==0 && parseFloat(String(totalPrice)).toFixed(2)!=0.00){
+            swal({
+                title:'Invalid price!',
+                text:'Piece count is zero',
+                type:'info',
+                confirmButtonColor:'#009688'
+            });
+            me.value = "0.00";
+        }else if(parseInt(priceCount)==0){
+            me.value = "0.00";
+        }else{
+            totalPrice = parseFloat(String(totalPrice)).toFixed(2);
+            me.value = totalPrice;
+            document.getElementById(stockNo+"up"+me.id.substr(-1)).value = parseFloat(String(totalPrice/(priceCount*pieceLength))).toFixed(2);
+        }
     }
 </script>
 </body>
