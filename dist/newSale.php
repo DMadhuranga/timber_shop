@@ -230,7 +230,6 @@ if($timber_types==-1){
                 confirmButtonColor:'#009688'
             });
         }else{
-            alert(getRowNumber());
             cartTable = document.getElementById("cartTable");
             var newRow = cartTable.insertRow(cartTable.rows.length);
             str = "<td rowspan='"+pieceCounts.length+"'>"+String(cartTable.rows.length-1)+"</td><td rowspan='"+pieceCounts.length+"'>"+
