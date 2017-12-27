@@ -149,3 +149,27 @@ function checkLogin($conn,$u_name,$password){
         echo print_r($result);
     }
 }
+
+function getBuyer($dbh){
+    if ($dbh) {
+        $sql = "select buyer_id,buyer_name,address from buyer where deleted=0";
+        $result = array();
+        foreach ($dbh->query($sql) as $row) {
+            $buyer = new User();
+            $buyer->setFirstName($row["buyer_name"]);
+            $buyer->setUserId($row["buyer_id"]);
+            $buyer->setAddress($row["address"]);
+            array_push($result, $buyer);
+        }
+        return $result;
+    }
+}
+
+function getNextStockNumber($dbh){
+    if ($dbh){
+        $sql="SELECT stock_no from bundle order by shipment_id desc";
+        $stmt = $dbh->query($sql);
+        $row =$stmt->fetchObject();
+        return $row->stock_no+1;
+    }
+}
