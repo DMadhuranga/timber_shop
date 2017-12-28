@@ -63,3 +63,61 @@ if(isset($_REQUEST["timberAvailableData"])){
     echo $return;
     exit();
 }
+
+if(isset($_REQUEST["makeSale"])){
+    $return = "error";
+    $cid = $_REQUEST["customer_id"];
+    $discount = $_REQUEST["discount"];
+    $dataString = $_REQUEST["dataString"];
+    $date = date("Y-m-d");
+    if($dbh){
+        $dbh->beginTransaction();
+        $sql = $dbh->prepare("INSERT INTO issue (customer_id,issue_date,discount) VALUES (?,?,?);");
+        $sql->execute(array($cid,$date,$discount));
+        if($sql){
+            $issueId = $dbh->lastInsertId();
+            $query = "INSERT INTO issue_pieces (issue_id,stock_no,piece_length,sold_piece_count,total_price) VALUES ";
+            $bundles = explode("####",$dataString);
+            $pieces = array();
+            foreach ($bundles as $item){
+                $temp = explode("****",$item);
+                if(sizeof($temp)==4){
+                    array_push($pieces,$temp);
+                }
+
+            }
+            $bundles = array();
+            $paras = array();
+            foreach ($pieces as $item){
+                if($item[2]>0){
+                    $bundles[$item[0]] = "";
+                }
+            }
+            foreach ($pieces as $item){
+                if(array_key_exists($item[0],$bundles)){
+                    array_push($paras,$issueId);
+                    array_push($paras,$item[0]);
+                    array_push($paras,$item[1]);
+                    array_push($paras,$item[2]);
+                    array_push($paras,$item[3]);
+                    $query = $query." ("."?".","."?".","."?".","."?".","."?"."),";
+                }
+            }
+            $query = substr($query,0,strlen($query)-1);
+            $sql = $dbh->prepare($query);
+            $sql->execute($paras);
+            if($sql){
+                $dbh->commit();
+                if($dbh){
+                    $return = $issueId;
+                }
+            }else{
+                $dbh->rollBack();
+            }
+        }else{
+            $dbh->rollBack();
+        }
+    }
+    echo $return;
+    exit();
+}

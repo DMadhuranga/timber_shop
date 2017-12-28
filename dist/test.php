@@ -9,9 +9,7 @@ include_once("assests/common/dbconnection.php");
 include_once("assests/common/basic_support.php");
 include_once("assests/common/classes/User.php");
 $user = unserialize($_SESSION["user"]);
-foreach ($user->getContacts() as $number){
-    echo $number[0]." - ".$number[1]."</br>";
-}
+echo date("Y-m-d");
 ?>
 <html>
 <head>

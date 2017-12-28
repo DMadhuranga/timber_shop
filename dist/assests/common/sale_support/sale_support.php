@@ -46,3 +46,19 @@ function getTimberTypes($dbh){
     }
     return -1;
 }
+
+function doesCustomerExist($dbh,$customer_id){
+    if ($dbh) {
+        $sql = $dbh->prepare("SELECT * FROM customer WHERE customer_id=? AND deleted='0'");
+        $sql->execute(array($customer_id));
+        if ($sql) {
+            $result = $sql->fetchAll();
+            if(sizeof($result)==1){
+                return true;
+            }else{
+                return false;
+            }
+        }
+    }
+    die("Connection error");
+}

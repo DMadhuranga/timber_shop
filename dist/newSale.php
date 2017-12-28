@@ -15,7 +15,10 @@ $timber_types = getTimberTypes($dbh);
 if($timber_types==-1){
     die("Connection error");
 }
-
+if(!isset($_GET["customer_id"]) or !doesCustomerExist($dbh,$_GET["customer_id"])){
+    header("location:home.php");
+}
+$customer_id = $_GET["customer_id"];
 
 ?>
 <!DOCTYPE html>
@@ -108,6 +111,7 @@ if($timber_types==-1){
                             ?>
                         </select>
                     </div>
+                    <input type="text" hidden="" id="customerId" value="<?php echo $customer_id;?>">
                     <div class="form-group">
                         <button class="btn btn-primary icon-btn" type="button" onclick="loadAvailableTimber()"><i class="fa fa-fw fa-lg fa-search"></i>Search</button>
                     </div>
@@ -132,20 +136,22 @@ if($timber_types==-1){
                 <div class="card">
                     <h3 class="card-title">Cart</h3>
                     <div class="card-body" id="cartDiv">
-                        <form class="form-inline">
+                        <form class="form-inline" onsubmit="event.preventDefault();">
                             <div class="form-group">
-                                <label class="control-label">Total : 12205.65 &nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                <label class="control-label">Total : </label>
+                                &nbsp;<label id="totalBillValue" class="control-label">0.00</label>
                             </div>
                             <div class="form-group">
-                                <label class="control-label">Discount :&nbsp;</label>
-                                <input id="discountInp" type="text" placeholder="">
+                                <label class="control-label"> &nbsp;&nbsp;&nbsp;&nbsp;Discount :&nbsp;</label>
+                                <input onchange="checkDiscount(this)" id="discountInp" type="text" placeholder="" value="0.00">
                                 &nbsp;&nbsp;&nbsp;&nbsp;
                             </div>
                             <div class="form-group">
-                                <label class="control-label">Final : 12205.65 &nbsp;&nbsp;&nbsp;&nbsp;</label>
+                                <label class="control-label">Final : </label>
+                                &nbsp<label id="finalBillValue" class="control-label">0.00</label>
                             </div>
                             <div class="form-group">
-                                <button class="btn btn-primary icon-btn" type="button"><i class="fa fa-fw fa-lg fa-check-circle"></i>Finish</button>
+                                &nbsp;&nbsp;&nbsp;&nbsp;<button onclick="makeSale()" class="btn btn-primary icon-btn" type="button"><i class="fa fa-fw fa-lg fa-check-circle"></i>Finish</button>
                             </div>
                             <br>&nbsp;<br>&nbsp;<br>
                         </form>
@@ -255,12 +261,15 @@ if($timber_types==-1){
                 unitPrice = "0.00";
             }
             str = "<td rowspan='"+pieceCounts.length+"'>"+String(num)+"</td><td rowspan='"+pieceCounts.length+"'>"+
-                stockNo+"</td><td rowspan='"+pieceCounts.length+"'>"+dimension+"</td><td id='"+stockNo+"#pl0"+"'>"+pieceLengths[0]+"</td><td><input id='"+stockNo+"#pc0"+"' data-maxCount='"+pieceCounts[0]+"' type='text' value='"+pieceCounts[0]+"' onchange='checkCount(this)'></td><td><input id='"+stockNo+"#up0"+"' onchange='changeUnitPrice(this)' data-original='"+unitPrice+"' type='text' value='"+unitPrice+"'></td><td><input onchange='checkTotalPrice(this)' id='"+stockNo+"#tp0"+"' type='text' value='"+parseFloat(String(parseInt(pieceLengths[0])*parseInt(pieceCounts[0])*parseFloat(unitPrice))).toFixed(2)+"'></td><td rowspan='"+pieceCounts.length+"'><a data-stockNo='"+stockNo+"' class='btn btn-default' onclick='remove(this)' >Remove</a></td>";
+                stockNo+"</td><td rowspan='"+pieceCounts.length+"'>"+dimension+"</td><td id='"+stockNo+"#pl0"+"'>"+pieceLengths[0]+"</td><td><input id='"+stockNo+"#pc0"+"' data-maxCount='"+pieceCounts[0]+"' type='text' value='"+pieceCounts[0]+"' onchange='checkCount(this)'></td><td><input id='"+stockNo+"#up0"+"' onchange='changeUnitPrice(this)' data-original='"+unitPrice+"' type='text' value='"+getMoneyFormat(unitPrice)+"'></td><td><input onchange='checkTotalPrice(this)' id='"+stockNo+"#tp0"+"' type='text' value='"+getMoneyFormat(String(parseInt(pieceLengths[0])*parseInt(pieceCounts[0])*parseFloat(unitPrice)))+"'></td><td rowspan='"+pieceCounts.length+"'><a data-stockNo='"+stockNo+"' class='btn btn-default' onclick='remove(this)' >Remove</a></td>";
             newRow.innerHTML = str;
             for(i=1;i<pieceCounts.length;i++){
-                cartTable.insertRow(cartTable.rows.length).innerHTML = "<td id='"+stockNo+"#pl"+String(i)+"'>"+pieceLengths[i]+"</td><td><input id='"+stockNo+"#pc"+String(i)+"' data-maxCount='"+pieceCounts[i]+"' type='text' value='"+pieceCounts[i]+"' onchange='checkCount(this)'></td><td><input id='"+stockNo+"#up"+String(i)+"' onchange='changeUnitPrice(this)' data-original='"+unitPrice+"' type='text' value='"+unitPrice+"'></td><td><input onchange='checkTotalPrice(this)' id='"+stockNo+"#tp"+String(i)+"' type='text' value='"+parseFloat(String(parseInt(pieceLengths[i])*parseInt(pieceCounts[i])*parseFloat(unitPrice))).toFixed(2)+"'></td>";
+                cartTable.insertRow(cartTable.rows.length).innerHTML = "<td id='"+stockNo+"#pl"+String(i)+"'>"+pieceLengths[i]+"</td><td><input id='"+stockNo+"#pc"+String(i)+"' data-maxCount='"+pieceCounts[i]+"' type='text' value='"+pieceCounts[i]+"' onchange='checkCount(this)'></td><td><input id='"+stockNo+"#up"+String(i)+"' onchange='changeUnitPrice(this)' data-original='"+unitPrice+"' type='text' value='"+getMoneyFormat(unitPrice)+"'></td><td><input onchange='checkTotalPrice(this)' id='"+stockNo+"#tp"+String(i)+"' type='text' value='"+getMoneyFormat(String(parseInt(pieceLengths[i])*parseInt(pieceCounts[i])*parseFloat(unitPrice)))+"'></td>";
             }
+            updateBillProperly();
         }
+
+
     }
 
     function isBundleAdded(stockNo){
@@ -287,6 +296,10 @@ if($timber_types==-1){
     function checkCount(me){
         newCount = me.value;
         maxCount = me.getAttribute("data-maxCount");
+        if(newCount==""){
+            me.value = "0";
+            newCount="0";
+        }
         if(isNaN(newCount) || (newCount % 1 != 0) || (newCount<0)){
             me.value = maxCount;
             swal({
@@ -308,14 +321,15 @@ if($timber_types==-1){
         }else{
             stockNo = me.id.substr(0,me.id.length-3);
             pieceLength = parseInt(document.getElementById(stockNo+"pl"+me.id.substr(-1)).innerHTML);
-            price = document.getElementById(stockNo+"up"+me.id.substr(-1)).value;
-            document.getElementById(stockNo+"tp"+me.id.substr(-1)).value = parseFloat(String(pieceLength*newCount*price)).toFixed(2);
+            price = getValueFormat(document.getElementById(stockNo+"up"+me.id.substr(-1)).value);
+            document.getElementById(stockNo+"tp"+me.id.substr(-1)).value = getMoneyFormat(pieceLength*newCount*price);
+            updateBillProperly();
         }
 
     }
 
     function changeUnitPrice(me){
-        price = me.value;
+        price = getValueFormat(me.value);
         if(isNaN(price) || (price<0)){
             swal({
                 title:'Invalid price!',
@@ -323,15 +337,16 @@ if($timber_types==-1){
                 type:'info',
                 confirmButtonColor:'#009688'
             });
-            me.value = me.getAttribute("data-original");
+            me.value = getMoneyFormat(me.getAttribute("data-original"));
             changeUnitPrice(me)
         }else{
-            me.value = parseFloat(String(price)).toFixed(2);
-            price = me.value;
+            me.value = getMoneyFormat(price);
+            price = getValueFormat(me.value);
             stockNo = me.id.substr(0,me.id.length-3);
             pieceLength = parseInt(document.getElementById(stockNo+"pl"+me.id.substr(-1)).innerHTML);
             pieceCount = document.getElementById(stockNo+"pc"+me.id.substr(-1)).value;
-            document.getElementById(stockNo+"tp"+me.id.substr(-1)).value = parseFloat(String(pieceLength*pieceCount*price)).toFixed(2);
+            document.getElementById(stockNo+"tp"+me.id.substr(-1)).value = getMoneyFormat(pieceLength*pieceCount*price);
+            updateBillProperly();
         }
     }
     function getCellRow(me){
@@ -351,12 +366,15 @@ if($timber_types==-1){
         for(i=0;i<table.length;i++){
             if(table[i].cells[1].innerHTML==stockNo){
                 document.getElementById("cartTable").deleteRow(i);
-                while(table[i].cells.length!=8){
+                while(table.length>i && table[i].cells.length!=8){
                     document.getElementById("cartTable").deleteRow(i);
                 }
-                orderTable();
+                break;
             }
         }
+        orderTable();
+        updateBillProperly();
+
     }
 
     function orderTable(){
@@ -371,7 +389,7 @@ if($timber_types==-1){
     }
 
     function checkTotalPrice(me){
-        totalPrice = me.value;
+        totalPrice = getValueFormat(me.value);
         stockNo = me.id.substr(0,me.id.length-3);
         pieceLength = parseInt(document.getElementById(stockNo+"pl"+me.id.substr(-1)).innerHTML);
         priceCount = document.getElementById(stockNo+"pc"+me.id.substr(-1)).value;
@@ -382,8 +400,8 @@ if($timber_types==-1){
                 type:'info',
                 confirmButtonColor:'#009688'
             });
-            price = document.getElementById(stockNo+"up"+me.id.substr(-1)).value;
-            me.value = parseFloat(String(pieceLength*priceCount*price)).toFixed(2);
+            price = getValueFormat(document.getElementById(stockNo+"up"+me.id.substr(-1)).value);
+            me.value = getMoneyFormat(pieceLength*priceCount*price);
         }else if(parseInt(priceCount)==0 && parseFloat(String(totalPrice)).toFixed(2)!=0.00){
             swal({
                 title:'Invalid price!',
@@ -396,9 +414,174 @@ if($timber_types==-1){
             me.value = "0.00";
         }else{
             totalPrice = parseFloat(String(totalPrice)).toFixed(2);
-            me.value = totalPrice;
-            document.getElementById(stockNo+"up"+me.id.substr(-1)).value = parseFloat(String(totalPrice/(priceCount*pieceLength))).toFixed(2);
+            me.value = getMoneyFormat(totalPrice);
+            document.getElementById(stockNo+"up"+me.id.substr(-1)).value = getMoneyFormat(totalPrice/(priceCount*pieceLength));
         }
+        updateBillProperly();
+    }
+
+    function updateTotalBillValue () {
+        total = 0;
+        table = document.getElementById("cartTable").rows;
+        stockNo = "";
+        cnt = 0;
+        for(j=1; j<table.length; j++){
+            if(table[j].cells.length==8){
+                cnt = 0;
+                stockNo = table[j].cells[1].innerHTML;
+            }
+            total = total + getValueFormat(document.getElementById(stockNo+"#tp"+String(cnt)).value);
+            cnt++;
+        }
+        document.getElementById("totalBillValue").innerHTML = getMoneyFormat(total);
+        document.getElementById("finalBillValue").innerHTML = getMoneyFormat(total - getValueFormat(document.getElementById("discountInp").value));
+    }
+
+    function updateBillProperly(){
+        setTimeout(function(){
+            updateTotalBillValue();
+        },100);
+    }
+
+    function checkDiscount(me){
+        discount = getValueFormat(me.value);
+        if(isNaN(discount) || (discount<0) || (discount>getValueFormat(document.getElementById("totalBillValue").innerHTML))){
+            swal({
+                title:'Invalid value!',
+                text:'',
+                type:'info',
+                confirmButtonColor:'#009688'
+            });
+            me.value = "0.00";
+            checkDiscount(me);
+        }else{
+            discount = getMoneyFormat(discount);
+            me.value = discount;
+            updateBillProperly();
+        }
+    }
+
+    function getMoneyFormat(amount){
+        return parseFloat(String(amount)).toFixed(2).replace(/./g, function(c, i, a) {
+            return i && c !== "." && ((a.length - i) % 3 === 0) ? ',' + c : c;
+        });
+    }
+
+    function getValueFormat(amount){
+        amnt = String(amount).split(",");
+        amount = "";
+        for(i=0; i<amnt.length;i++){
+            amount+=amnt[i];
+        }
+        return parseFloat(parseFloat(amount).toFixed(2));
+    }
+
+    function makeSale() {
+        customerId = document.getElementById("customerId").value;
+        discount = getValueFormat(document.getElementById("discountInp").value).toFixed(2);
+        table = document.getElementById("cartTable").rows;
+        cnt = 0;
+        dataString = "";
+        zeroValueExist = false;
+        countZero = true;
+        for(j=1;j<table.length;j++){
+            if(table[j].cells.length==8){
+                cnt = 0;
+                stockNo = table[j].cells[1].innerHTML;
+            }
+            if(getValueFormat(document.getElementById(stockNo+"#tp"+String(cnt)).value)==0){
+                zeroValueExist = true;
+            }
+            if(getValueFormat(document.getElementById(stockNo+"#pc"+String(cnt)).value)!=0){
+                countZero = false;
+            }
+            dataString = dataString+stockNo+"****"+String(getValueFormat(document.getElementById(stockNo+"#pl"+String(cnt)).innerHTML))+"****"+
+                String(getValueFormat(document.getElementById(stockNo+"#pc"+String(cnt)).value))+"****"+
+                String(getValueFormat(document.getElementById(stockNo+"#tp"+String(cnt)).value))+"####";
+            cnt++;
+        }
+        if(countZero){
+            swal({
+                title:'Please select items!',
+                text:'',
+                type:'error',
+                confirmButtonColor:'#009688'
+            });
+        }else{
+            a = "";
+            if(zeroValueExist){
+                a = "!!! There are zero price items !!!";
+            }
+            sendSaleDetails(customerId,discount,dataString);
+        }
+    }
+
+    function sendSaleDetails(customerId,discount,dataString){
+        swal({
+            title: 'Are you sure?',
+            text: a,
+            type: 'info',
+            showCancelButton: true,
+            confirmButtonColor: '#009688',
+            cancelButtonColor: '#bec4ce',
+            confirmButtonText: 'Proceed',
+            allowOutsideClick: false
+        }).then(function () {
+            swal({
+                title: 'Please wait',
+                text: '',
+                timer: 3000,
+                onOpen: function () {
+                    swal.showLoading()
+                },
+                allowOutsideClick: false
+            }).then(function () {},
+                // handling the promise rejection
+                function (dismiss) {
+                    if (dismiss === 'timer') {
+                        console.log('I was closed by the timer')
+                    }
+                }
+            );
+            $.ajax({
+                url : "assests/common/sale_support/sale_ajax.php",
+                type : "POST",
+                timeout : 3000,
+                async : "false",
+                data : {
+                    "makeSale"  :true,
+                    "customer_id" : customerId,
+                    "discount" : discount,
+                    "dataString" : dataString
+                },
+                success : function(data){
+                    if(data=="error"){
+                        swal({
+                            title:'Connection failed!',
+                            text:'',
+                            type:'info',
+                            confirmButtonColor:'#009688'
+                        });
+                    }else{
+                        swal({
+                            title:'Sale complete!',
+                            text:'',
+                            type:'success',
+                            confirmButtonColor:'#009688'
+                        });
+                        setTimeout(function(){window.location.href= "viewSale.php?id="+data; },1500);
+                    }
+                },
+                error : function(a,b,c) {
+                    swal({
+                        title:'Connection failed!',
+                        text:'',
+                        type:'info',
+                        confirmButtonColor:'#009688'
+                    });
+                }
+            });
+        });
     }
 </script>
 </body>
