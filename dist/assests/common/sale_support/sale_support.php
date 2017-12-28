@@ -9,6 +9,7 @@ set_error_handler(function() { /* ignore errors */ });
 try{
     include_once("../classes/TimberBundle.php");
     include_once("../classes/TimberStock.php");
+    include_once("../classes/Sale.php");
     include_once("../dbconnection.php");
 }catch(ErrorException $err){
 
@@ -57,6 +58,30 @@ function doesCustomerExist($dbh,$customer_id){
                 return true;
             }else{
                 return false;
+            }
+        }
+    }
+    die("Connection error");
+}
+
+function getSale($dbh,$issueId){
+    if ($dbh) {
+        $sql = $dbh->prepare("SELECT * FROM (SELECT * FROM issue NATURAL JOIN issue_pieces WHERE issue.issue_id=? AND issue.deleted='0') AS iap NATURAL JOIN bundle_pieces NATURAL JOIN bundle JOIN timber_type USING(type_id) JOIN cross_section USING(cross_section_id)");
+        $sql->execute(array($issueId));
+        if ($sql) {
+            $result = $sql->fetchAll();
+            if(sizeof($result)>0){
+                $sale = new Sale();
+                $sale->setIssueId($result[0]["issue_id"]);
+                $sale->setCustomerId($result[0]["customer_id"]);
+                $sale->setIssueDate($result[0]["issue_date"]);
+                $sale->setDiscount($result[0]["discount"]);
+                foreach ($result as $piece){
+                    $sale->addPiece($piece["stock_no"],$piece["timber_name"],$piece["thickness"],$piece["width"],$piece["piece_length"],$piece["sold_piece_count"],$piece["total_price"]);
+                }
+                return $sale;
+            }else{
+                return null;
             }
         }
     }
