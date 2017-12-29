@@ -106,7 +106,7 @@ class Sale
     /**
      * @param mixed $pieces
      */
-    public function addPiece($stockNo,$timberType,$thickness,$width,$pieceLength,$pieceCount,$totalPrice)
+    public function addPiece($stockNo,$timberType,$thickness,$width,$pieceLength,$pieceCount,$totalPrice,$bundleNo)
     {
         if($this->pieces==null){
             $this->pieces = array();
@@ -114,7 +114,7 @@ class Sale
         if(!array_key_exists($stockNo,$this->pieces)){
             $this->pieces[$stockNo] = array();
         }
-        $temp = array($timberType,$thickness,$width,$pieceLength,$pieceCount,$totalPrice);
+        $temp = array($timberType,$thickness,$width,$pieceLength,$pieceCount,$totalPrice,$bundleNo);
         array_push($this->pieces[$stockNo],$temp);
     }
 

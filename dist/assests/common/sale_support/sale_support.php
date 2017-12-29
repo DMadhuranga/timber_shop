@@ -77,11 +77,31 @@ function getSale($dbh,$issueId){
                 $sale->setIssueDate($result[0]["issue_date"]);
                 $sale->setDiscount($result[0]["discount"]);
                 foreach ($result as $piece){
-                    $sale->addPiece($piece["stock_no"],$piece["timber_name"],$piece["thickness"],$piece["width"],$piece["piece_length"],$piece["sold_piece_count"],$piece["total_price"]);
+                    $sale->addPiece($piece["stock_no"],$piece["timber_name"],$piece["thickness"],$piece["width"],$piece["piece_length"],$piece["sold_piece_count"],$piece["total_price"],$piece["bundle_no"]);
                 }
                 return $sale;
             }else{
                 return null;
+            }
+        }
+    }
+    die("Connection error");
+}
+
+function getSales($dbh,$startDate,$endDate){
+    if ($dbh) {
+        $sql = $dbh->prepare("SELECT issue_id,customer_name,issue_date,SUM(total_price)-discount AS price FROM (SELECT * FROM issue NATURAL JOIN issue_pieces WHERE ((issue.issue_date>=? AND issue.issue_date <= ?) AND issue.deleted='0')) AS iap NATURAL JOIN bundle_pieces NATURAL JOIN bundle JOIN timber_type USING(type_id) JOIN cross_section USING(cross_section_id) JOIN customer USING(customer_id) GROUP BY issue_id ORDER BY issue_date DESC");
+        $sql->execute(array($startDate,$endDate));
+        if ($sql) {
+            $result = $sql->fetchAll();
+            if(sizeof($result)>0){
+                $table ="<table id='saleTable' class='table table-hover'><tr><th>Issue Id</th><th>Date</th><th>Customer Name</th><th>Amount</th></tr>";
+                foreach ($result as $piece){
+                    $table = $table."<tr><td>".$piece["issue_id"]."</td><td>".$piece["issue_date"]."</td><td>".$piece["customer_name"]."</td><td>".$piece["price"]."</td></tr>";
+                }
+                return $table;
+            }else{
+                return "<div class='alert alert-success'><strong></strong> No sales available.</div>";
             }
         }
     }

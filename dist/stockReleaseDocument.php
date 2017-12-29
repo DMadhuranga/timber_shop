@@ -110,7 +110,8 @@ if($sale==null){
                                     <tr>
                                         <th>#</th>
                                         <th>Timber type</th>
-                                        <th>Serial</th>
+                                        <th>Stock No</th>
+                                        <th>Bundle No</th>
                                         <th>Dimension</th>
                                         <th>Piece Length</th>
                                         <th>Number of pieces</th>
@@ -127,7 +128,7 @@ if($sale==null){
                                         }else{
                                             $up = $pcs[0][5]/($pcs[0][3]*$pcs[0][4]);
                                         }
-                                        $table = $table."<tr><td rowspan='".strval(sizeof($pcs))."'>".strval($i)."</td><td rowspan='".strval(sizeof($pcs))."'>".$pcs[0][0]."</td><td rowspan='".strval(sizeof($pcs))."'>".$key."</td><td rowspan='".strval(sizeof($pcs))."'>".$pcs[0][1]."X".$pcs[0][2]."</td><td >".strval($pcs[0][3])."</td><td >".number_format($pcs[0][4])."</td></tr>";
+                                        $table = $table."<tr><td rowspan='".strval(sizeof($pcs))."'>".strval($i)."</td><td rowspan='".strval(sizeof($pcs))."'>".$pcs[0][0]."</td><td rowspan='".strval(sizeof($pcs))."'>".$key."</td><td rowspan='".strval(sizeof($pcs))."'>".$pcs[0][6]."</td><td rowspan='".strval(sizeof($pcs))."'>".$pcs[0][1]."X".$pcs[0][2]."</td><td >".strval($pcs[0][3])."</td><td >".number_format($pcs[0][4])."</td></tr>";
                                         for ($k=1;$k<sizeof($pcs);$k++){
                                             if($pcs[$k][4]==0){
                                                 $up = 0;
@@ -147,7 +148,7 @@ if($sale==null){
                         <div class="row invoice-info">
                             <div class="col-xs-4"></div>
                             <div class="col-xs-3"></div>
-                            
+
                         </div>
                         <div class="row hidden-print mt-20">
                             <div class="col-xs-12 text-right"><a class="btn btn-primary" href="javascript:window.print();" target="_blank"><i class="fa fa-print"></i> Print</a></div>

@@ -9,7 +9,8 @@ include_once("assests/common/dbconnection.php");
 include_once("assests/common/basic_support.php");
 include_once("assests/common/classes/User.php");
 $user = unserialize($_SESSION["user"]);
-echo date("Y-m-d");
+$today =  date("Y-m-d");
+echo date('Y-m-d', strtotime($today.' - 1 days'));
 ?>
 <html>
 <head>
