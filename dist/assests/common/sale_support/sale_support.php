@@ -95,11 +95,11 @@ function getSales($dbh,$startDate,$endDate){
         if ($sql) {
             $result = $sql->fetchAll();
             if(sizeof($result)>0){
-                $table ="<table id='saleTable' class='table table-hover'><tr><th>Issue Id</th><th>Date</th><th>Customer Name</th><th>Amount</th></tr>";
+                $table ="<table id='saleTable' class='table table-hover'><thead><tr><th>Issue Id</th><th>Date</th><th>Customer Name</th><th>Amount</th></tr></thead><tbody>";
                 foreach ($result as $piece){
-                    $table = $table."<tr><td>".$piece["issue_id"]."</td><td>".$piece["issue_date"]."</td><td>".$piece["customer_name"]."</td><td>".$piece["price"]."</td></tr>";
+                    $table = $table."<tr onclick='viewSale(this)' id='".$piece["issue_id"]."'><td>".$piece["issue_id"]."</td><td>".$piece["issue_date"]."</td><td>".$piece["customer_name"]."</td><td>".$piece["price"]."</td></tr>";
                 }
-                return $table;
+                return $table."</tbody>";
             }else{
                 return "<div class='alert alert-success'><strong></strong> No sales available.</div>";
             }

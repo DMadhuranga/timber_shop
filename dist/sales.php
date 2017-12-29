@@ -20,7 +20,7 @@ if(isset($_GET["endDate"])){
 if(isset($_GET["startDate"])){
     $startDate = $_GET["startDate"];
 }else{
-    $startDate = date('Y-m-d', strtotime($endDate.' - 18 days'));
+    $startDate = date('Y-m-d', strtotime($endDate.' - 7 days'));
 }
 $sales = getSales($dbh,$startDate,$endDate);
 
@@ -36,6 +36,8 @@ $sales = getSales($dbh,$startDate,$endDate);
     <link rel="stylesheet" type="text/css" href="css/main.css">
     <!-- Font-icon css-->
     <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="assests/library/daterangepicker/daterangepicker.css" />
+    <link rel="stylesheet" type="text/css" href="assests/library/sweetAlert2/sweetalert2.min.css">
     <title>Kalum Timber</title>
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries-->
     <!--if lt IE 9
@@ -92,8 +94,19 @@ $sales = getSales($dbh,$startDate,$endDate);
             </div>
         </div>
         <div class="card">
-            <h3 class="card-title"></h3>
+            <p class="card-title">
+                <form class="form-control-static">
+                    <div class="form-group">
+                        <label class="control-label">Date Range</label>
+                        <input name="datefilter" id="dateRange" value=""  class="form-control" type="text" placeholder="Enter date range">
+                    </div>
+                    <div class="form-group">
+                        <button onclick="viewSales()" class="btn btn-primary icon-btn" type="button"><i class="fa fa-fw fa-lg fa-check-circle"></i>Show</button>
+                    </div>
+                </form>
+            </p>
             <div class="card-body3">
+
                 <?php echo $sales; ?>
             </div>
         </div>
@@ -113,7 +126,106 @@ $sales = getSales($dbh,$startDate,$endDate);
 <script src="js/main.js"></script>
 <script type="text/javascript" src="js/plugins/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="js/plugins/dataTables.bootstrap.min.js"></script>
+<script type="text/javascript" src="assests/library/daterangepicker/moment.min.js"></script>
+<script type="text/javascript" src="assests/library/daterangepicker/daterangepicker.js"></script>
+<script type="text/javascript" src="assests/library/sweetAlert2/sweetalert2.min.js"></script>
 <script type="text/javascript">
+    $(function() {
+        $('input[name="datefilter"]').daterangepicker({
+            autoUpdateInput: false,
+            locale: {
+                cancelLabel: 'Clear'
+            }
+        });
+
+        $('input[name="datefilter"]').on('apply.daterangepicker', function(ev, picker) {
+            $(this).val(picker.startDate.format('YYYY-MM-DD') + ' - ' + picker.endDate.format('YYYY-MM-DD'));
+        });
+
+        $('input[name="datefilter"]').on('cancel.daterangepicker', function(ev, picker) {
+            $(this).val('');
+        });
+
+    });
+</script>
+
+<script type="text/javascript">
+    function validDate(date) {
+        if(date.length==23){
+            dates = date.split("-");
+            if(dates.length==6){
+                if(isvaliddate(dates[0],dates[1],dates[2]) && isvaliddate(dates[3],dates[4],dates[5])){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    function isvaliddate(year,month,xday) {
+        if((isNaN(year) || isNaN(month)) || isNaN(xday)){
+            return false;
+        }else if((year<1900) || (year>2040)){
+            return false;
+        }else if((month>12) || (month<1)){
+            return false;
+        }else if((xday>31) || (xday<1)){
+            return false;
+        }else{
+            if(((month%2==0) && (month<7)) || ((month%2==1) && (month>8))){
+                if(xday>30){
+                    return false;
+                }
+                if(month==2){
+                    if(xday>29){
+                        return false;
+                    }
+                }
+                if((month==2)&&(year%4!=0)){
+                    if(xday>28){
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+    }
+    function viewSales() {
+        range = document.getElementById("dateRange").value;
+        if(range==""){
+            error = true;
+            swal({
+                title:'Please select a date!',
+                text:'',
+                type:'info',
+                confirmButtonColor:'#009688'
+            });
+        }else if(!validDate(range)){
+            error = true;
+            swal({
+                title:'Date format error!',
+                text:'',
+                type:'info',
+                confirmButtonColor:'#009688'
+            });
+        }else{
+            start_date = Date.parse(range.split(" - ")[0]);
+            end_date = Date.parse(range.split(" - ")[1]);
+            if(start_date>end_date){
+                swal({
+                    title:'Invalid date range!',
+                    text:'',
+                    type:'info',
+                    confirmButtonColor:'#009688'
+                });
+            }else{
+                window.location.href="sales.php?startDate="+range.split(" - ")[0]+"&"+"endDate="+range.split(" - ")[1];
+            }
+        }
+    }
+
+    function viewSale(me){
+        window.location.href = "viewSale.php?id="+me.id;
+    }
     $(document).ready(function () {
         $(document.getElementById("saleTable")).DataTable();
     });
