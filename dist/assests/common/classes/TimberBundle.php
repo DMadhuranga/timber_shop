@@ -18,6 +18,8 @@ class TimberBundle
     var $pieces;
     var $arrivalDate;
     var $price;
+    var $length;
+    var $count;
 
     /**
      * @return mixed
@@ -181,5 +183,40 @@ class TimberBundle
     {
         $this->arrivalDate = $arrivalDate;
     }
+
+    /**
+     * @return mixed
+     */
+    public function getLength()
+    {
+        return $this->length;
+    }
+
+    /**
+     * @param mixed $length
+     */
+    public function setLength($length)
+    {
+        $this->length = $length;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCount()
+    {
+        return $this->count;
+    }
+
+    /**
+     * @param mixed $count
+     */
+    public function setCount($count)
+    {
+        $this->count = $count;
+    }
+
+
+
 
 }

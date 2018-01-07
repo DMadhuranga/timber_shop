@@ -173,3 +173,4 @@ function getNextStockNumber($dbh){
         return $row->stock_no+1;
     }
 }
+

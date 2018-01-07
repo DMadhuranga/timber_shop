@@ -87,25 +87,19 @@ $user = unserialize($_SESSION["user"]);
         </div>
         <div class="col-md-12">
 
-            <div class="bs-component" id="warning-msg" hidden="">
-                <div class="alert alert-dismissible alert-warning">
-                    <button class="close" type="button" data-dismiss="alert">×</button>
-                    <h4>Warning!</h4>
-                    <p>Best check yo self, you're not looking too good. Nulla vitae elit libero, a pharetra augue. Praesent commodo cursus magna,<a class="alert-link" href="#">vel scelerisque nisl consectetur et</a>.</p>
-                </div>
-            </div>
+
             <div class="card" id="done">
                 <h3 class="card-title">Shipment Details</h3>
                 <div class="card-body">
                     <form class="form-horizontal">
                         <div class="form-group">
-                            <label class="control-label col-md-2">Shipment Name</label>
+                            <label class="control-label col-md-2">Shipment Name<span style="color:red;">*</span></label>
                             <div class="col-md-8">
                                 <input class="form-control" type="text" placeholder="Enter shipment name" id="ship">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label col-md-2">Buyer Name</label>
+                            <label class="control-label col-md-2">Buyer Name<span style="color:red;">*</span></label>
                             <div class="col-md-8">
                                 <select class="form-control" id="buyerSelect">
                                     <optgroup >
@@ -118,7 +112,7 @@ $user = unserialize($_SESSION["user"]);
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label col-md-2">Buyer Address</label>
+                            <label class="control-label col-md-2">Buyer Address<span style="color:red;">*</span></label>
                             <div class="col-md-8">
                                 <input class="form-control" type="text" placeholder="Buyer address" id="buyerAddress">
                             </div>
@@ -130,13 +124,13 @@ $user = unserialize($_SESSION["user"]);
                             </div>
                         </div>-->
                         <div class="form-group">
-                            <label class="control-label col-md-2">Invoice number</label>
+                            <label class="control-label col-md-2">Invoice number<span style="color:red;">*</span></label>
                             <div class="col-md-8">
                                 <input class="form-control" type="text" placeholder="Enter invoice number" id="invoice">
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="control-label col-md-2">Date</label>
+                            <label class="control-label col-md-2">Date<span style="color:red;">*</span></label>
                             <div class="col-md-8">
                                 <input class="form-control" id="demoDate" type="text" placeholder="Select Date">
                             </div>
@@ -156,6 +150,14 @@ $user = unserialize($_SESSION["user"]);
 
 
                     </form>
+                </div>
+
+                <div class="bs-component" id="warning-msg" hidden="">
+                    <div class="alert alert-dismissible alert-warning">
+                        <button class="close" type="button" data-dismiss="alert" hidden="">×</button>
+                        <h4>Warning!</h4>
+                        <p><a class="alert-link" >Incomplete input!    </a>  Please fill fields with <span style="color:red;">*</span> mark</p>
+                    </div>
                 </div>
 
 
@@ -186,7 +188,7 @@ $user = unserialize($_SESSION["user"]);
     });
 
     $('#demoDate').datepicker({
-        format: "dd/mm/yyyy",
+        format: "yyyy/mm/dd",
         autoclose: true,
         todayHighlight: true
     });
@@ -208,8 +210,16 @@ $user = unserialize($_SESSION["user"]);
         var date = document.getElementById("demoDate").value;
         var vessel = document.getElementById("vessel").value;
         var remarks = document.getElementById("remarks").value;
+
+
+        if (ship==='' || invoice==='' || add[0]==="Select Buyer"|| date===""){
+            document.getElementById("warning-msg").style.display = "block";
+        }
+        else{
+            window.location.href="acceptTimberDetails.php?buyer="+add[0]+"&shipment="+ship+"&invoice="+invoice+"&date="+date+"&vessel="+vessel+"&remarks="+remarks;
+        }
         //alert(ship+"*"+add[0]+"*"+"*"+invoice+"*"+date+"*"+vessel+"*"+remarks);
-        window.location.href="acceptTimberDetails.php?buyer="+add[0]+"&shipment="+ship+"&invoice="+invoice+"&date="+date+"&vessel="+vessel+"&remarks="+remarks;
+        //window.location.href="acceptTimberDetails.php?buyer="+add[0]+"&shipment="+ship+"&invoice="+invoice+"&date="+date+"&vessel="+vessel+"&remarks="+remarks;
     }
 </script>
 
